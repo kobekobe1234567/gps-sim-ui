@@ -1,20 +1,18 @@
 # GPS-SIM-UI
 
-æœ¬è½¯ä»¶åŸºäºGPS-SDR-SIM(https://github.com/osqzss/gps-sdr-sim)ä¿®æ”¹åˆ¶ä½œå›¾å½¢ç•Œé¢ã€‚ä½¿ç”¨USRP B210ä½œä¸ºå‘å°„è£…ç½®ã€‚
+±¾Èí¼ş»ùÓÚGPS-SDR-SIMSIM(https://github.com/osqzss/gps-sdr-sim)ĞŞ¸Ä²¢ÖÆ×÷Í¼ĞÎ½çÃæ¡£Ê¹ÓÃUSRP B210×÷Îª·¢Éä×°ÖÃ¡£
 this software is based on GPS-SDR-SIM(https://github.com/osqzss/gps-sdr-sim) and make UI. this software use USRP B210 as the transmit equipment
 
-### SOFTWARE environment(è½¯ä»¶ç¯å¢ƒ)
+### SOFTWARE environment(Èí¼ş»·¾³)
 
-linuxæˆ–è€…windows, chinese-win64-releaseé‡Œé¢æ˜¯å·²ç»ç¼–è¯‘å¥½çš„æ”¯æŒWindows 64ä½ç³»ç»Ÿã€‚
+linux»òÕßWindows, chinese-win64-releaseÀïÃæÊÇÒÑ¾­±àÒëºÃµÄ³ÌĞòÖ§³ÖWindows 64Î»ÏµÍ³¡£
 linux or windows, english-win64-release folder contains the compiled binaries for windows 64bit system.
 
-### hardware requirment(ç¡¬ä»¶è¦æ±‚ï¼‰
-
-ä½¿ç”¨I5 3ä»£æˆ–æ›´é«˜çš„CPUï¼Œå¦‚æœè¿è¡Œæ—¶å‘½ä»¤è¡Œç•Œé¢æ‰“å‡ºå¤§é‡çš„â€˜Uâ€™é‚£å°±è¯´æ˜CPUæ€§èƒ½ä¸å¤Ÿï¼Œéœ€è¦æ€§èƒ½æ›´å¥½çš„CPUã€‚
+### hardware requirment£¨Ó²¼şÒªÇó£©
+Ê¹ÓÃI5 3´ú»ò¸ü¸ßµÄCPU£¬Èç¹ûÔËĞĞÊ±ÃüÁîĞĞ½çÃæ´ò³ö´óÁ¿µÄ¡®U¡¯ÄÇ¾ÍËµÃ÷CPUĞÔÄÜ²»¹»£¬ĞèÒªĞÔÄÜ¸üºÃµÄCPU¡£
 use I5 3 generation or above CPU, if it print a lot of 'U' in the command line terminal it means CPU performance is not good enough, you need to use more powerful CPU.
 
-### install and configure(å®‰è£…é…ç½®ï¼‰
-
-chinese-win64-releaseé‡Œé¢æ˜¯å·²ç»ç¼–è¯‘å¥½çš„ç¨‹åºï¼Œå¯ä»¥ç›´æ¥è¿è¡Œã€‚B210çš„windowsé©±åŠ¨éœ€è¦å¦å¤–å®‰è£…ï¼Œæ’å…¥B210ä¹‹åè®¾å¤‡ç®¡ç†å™¨é‡Œé¢æœ‰æœªçŸ¥è®¾å¤‡ï¼Œé€‰æ‹©æ›´æ–°é©±åŠ¨ç¨‹åºï¼Œé€‰æ‹©æœç´¢ç›®å½•erllc_uhd_winusb_driverã€‚
+### install and configure£¨°²×°ÅäÖÃ£©
+chinese-win64-releaseÀïÃæÊÇÒÑ¾­±àÒëºÃµÄ³ÌĞò£¬¿ÉÒÔÖ±½ÓÔËĞĞ¡£B210µÄwindowsÇı¶¯ĞèÒªÁíÍâ°²×°£¬²åÈëB210ºóÉè±¸¹ÜÀíÆ÷ÀïÃæÓĞÎ´ÖªÉè±¸£¬Ñ¡Ôñ¸üĞÂÇı¶¯³ÌĞò£¬Ñ¡ÔñËÑË÷Ä¿Â¼erllc_uhd_winusb_driver¡£
 english-win64-release contains the compiled binaries which can be directly run. you may need to install B210 driver for windows. Connect B210, there is unkown device in device manager, update its driver, choose search in erllc_uhd_winusb_driver folder.
 
