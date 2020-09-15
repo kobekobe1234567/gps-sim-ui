@@ -16,6 +16,37 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QRadioButton" name="radioButton_chinese">
+        <property name="text">
+         <string>中文</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioButton_english">
+        <property name="text">
+         <string>english</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
        <widget class="QLabel" name="label_3">
@@ -26,7 +57,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>   GPS file:</string>
+         <string>星历文件：</string>
         </property>
        </widget>
       </item>
@@ -49,7 +80,7 @@
       <item>
        <widget class="QPushButton" name="pushButton_browsegps">
         <property name="text">
-         <string>Browse</string>
+         <string>浏览</string>
         </property>
        </widget>
       </item>
@@ -66,7 +97,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>motion file:</string>
+         <string>轨迹文件：</string>
         </property>
        </widget>
       </item>
@@ -83,7 +114,7 @@
       <item>
        <widget class="QPushButton" name="pushButton_browsemotion">
         <property name="text">
-         <string>Browse</string>
+         <string>浏览</string>
         </property>
        </widget>
       </item>
@@ -100,7 +131,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string> Radio gain:</string>
+         <string>射频增益：</string>
         </property>
        </widget>
       </item>
@@ -148,14 +179,14 @@
     <item>
      <widget class="QCheckBox" name="checkBox_currentTime">
       <property name="text">
-       <string>use current time</string>
+       <string>使用当前时间</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QCheckBox" name="checkBox_holdLocation">
       <property name="text">
-       <string>fix location</string>
+       <string>固定位置</string>
       </property>
      </widget>
     </item>
@@ -190,7 +221,7 @@
       <item>
        <widget class="QPushButton" name="pushButton_start">
         <property name="text">
-         <string>Start</string>
+         <string>启动</string>
         </property>
        </widget>
       </item>
@@ -210,7 +241,7 @@
       <item>
        <widget class="QPushButton" name="pushButton_stop">
         <property name="text">
-         <string>Stop</string>
+         <string>停止</string>
         </property>
        </widget>
       </item>

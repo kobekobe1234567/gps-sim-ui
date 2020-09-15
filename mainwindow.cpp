@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     radio_thread = new RadioThread();
     gpssim_thread = new GpsSimThread();
 
+    translator = new QTranslator(this);
+
     QDir dir = QDir::current();
     QStringList filters;
     filters << "*.txt" << "*.csv";
@@ -34,12 +36,15 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->lineEdit_gpsfile->setText(files[0]);
     ui->lineEdit_gpsfile->setReadOnly(true);
     ui->lineEdit_gain->setValidator(new QIntValidator(0, 90, this));
-    ui->lineEdit_gain->setText("40");
+    ui->lineEdit_gain->setText("45");
     ui->checkBox_currentTime->setCheckState(Qt::Checked);
 
     ui->pushButton_start->setEnabled(true);
     ui->pushButton_stop->setEnabled(false);
 
+    ui->radioButton_chinese->setChecked(true);
+
+    connect(ui->radioButton_chinese, SIGNAL(toggled(bool)), this, SLOT(onChangeLanguege(bool)));
     connect(ui->pushButton_browsegps, SIGNAL(clicked()), this, SLOT(onBrowseGpsButtonClick()));
     connect(ui->pushButton_browsemotion, SIGNAL(clicked()), this, SLOT(onBrowseMotionButtonClick()));
     connect(ui->pushButton_start, SIGNAL(clicked()), this, SLOT(onStartButtonClick()));
@@ -100,27 +105,27 @@ void MainWindow::onStartButtonClick()
 {
     if(ui->lineEdit_gpsfile->text().length() == 0)
     {
-        QMessageBox::warning(NULL, tr("GPS file error"), tr("please set the GPS file"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(NULL, tr("星历文件错误"), tr("请设置星历文件。"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
     if(ui->lineEdit_motionfile->text().length() == 0)
     {
-        QMessageBox::warning(NULL, tr("motion file error"), tr("please set motion file"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(NULL, tr("轨迹文件错误"), tr("请设置轨迹文件。"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
     if(containChinese(ui->lineEdit_gpsfile->text()))
     {
-        QMessageBox::warning(NULL, tr("don't support Chinese path"), tr("please modify the path as English"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(NULL, tr("不支持中文文件名和文件夹"), tr("请修改文件名和文件夹名为英文。"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
     if(containChinese(ui->lineEdit_motionfile->text()))
     {
-        QMessageBox::warning(NULL, tr("don't support Chinese path"), tr("please modify the path as English"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(NULL, tr("不支持中文文件名和文件夹"), tr("请修改文件名和文件夹名为英文。"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
     if(ui->lineEdit_gain->text().length() == 0)
     {
-        QMessageBox::warning(NULL, tr("gain error"), tr("please set the radio gain"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(NULL, tr("增益错误"), tr("请设置增益。"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
     float radio_gain = ui->lineEdit_gain->text().toFloat();
@@ -128,7 +133,7 @@ void MainWindow::onStartButtonClick()
     {
         if(!radio_init(2.6e6, 1575420000, radio_gain))
         {
-            QMessageBox::warning(NULL, tr("Detect no external clock"), tr("please connect external clock to B210's 10MHZ port"), QMessageBox::Ok, QMessageBox::Ok);
+            QMessageBox::warning(NULL, tr("没检测到外部时钟"), tr("请将外部时钟接到B210的10Mhz。"), QMessageBox::Ok, QMessageBox::Ok);
             return;
         }
         radio_have_init = 1;
@@ -156,6 +161,7 @@ void MainWindow::onStartButtonClick()
     gpssim_thread->start();
     radio_thread->start();
 
+    ui->checkBox_currentTime->setEnabled(false);
     ui->pushButton_start->setEnabled(false);
     ui->pushButton_stop->setEnabled(true);
 }
@@ -167,6 +173,7 @@ void MainWindow::onStopButtonClick()
     gpssim_thread->wait();
     radio_thread->wait();
     radio_close();
+    ui->checkBox_currentTime->setEnabled(true);
     ui->pushButton_start->setEnabled(true);
     ui->pushButton_stop->setEnabled(false);
 }
@@ -192,12 +199,12 @@ void MainWindow::onGpsThreadError(int errorcode)
 {
     if(errorcode == GpsSimThread::FILE_CANNOT_OPEN)
     {
-        QMessageBox::warning(NULL, tr("error"), tr("can not open motion file"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(NULL, tr("错误"), tr("无法打开轨迹文件"), QMessageBox::Ok, QMessageBox::Ok);
         onStopButtonClick();
     }
     else if(errorcode == GpsSimThread::FILE_CONTENT_ERROR)
     {
-        QMessageBox::warning(NULL, tr("error"), tr("motion file format error"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(NULL, tr("错误"), tr("轨迹文件格式错误"), QMessageBox::Ok, QMessageBox::Ok);
         onStopButtonClick();
     }
 }
@@ -205,7 +212,22 @@ void MainWindow::onGpsThreadError(int errorcode)
 void MainWindow::onRadioThreadError(int errorcode)
 {
     if(errorcode == RadioThread::RADIO_UNDERFLOW)
-    {        
+    {
+    }
+}
+
+void MainWindow::onChangeLanguege(bool state)
+{
+    if(state == true)
+    {
+        qApp->removeTranslator(translator);
+        ui->retranslateUi(this);
+    }
+    else
+    {
+        translator->load("./english.qm");
+        qApp->installTranslator(translator);
+        ui->retranslateUi(this);
     }
 }
 

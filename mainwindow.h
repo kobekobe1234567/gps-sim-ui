@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTranslator>
 #include "radio_thread.h"
 #include "gpssim_thread.h"
 
@@ -26,9 +27,13 @@ private:
 
     int radio_have_init;
 
+    QTranslator *translator;
+
     bool containChinese(QString str);
 
 private slots:
+
+    void onChangeLanguege(bool state);
 
     void onBrowseGpsButtonClick();
 

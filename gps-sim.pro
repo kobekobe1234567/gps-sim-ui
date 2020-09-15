@@ -11,6 +11,8 @@ QMAKE_CXXFLAGS += /utf-8
 CONFIG += console
 }
 
+TRANSLATIONS += english.ts
+
 SOURCES += gpssim.cpp\
     main.cpp \
     mainwindow.cpp \
@@ -26,6 +28,7 @@ LIBS += -luhd -llibboost_system-vc141-mt-x64-1_72 -L"C:/Program Files/UHD/lib" -
 
 INCLUDEPATH += "C:/Program Files/UHD/include"
 INCLUDEPATH += "C:/Boost/include/boost-1_72"
+TR_EXCLUDE += "C:/Boost/include/boost-1_72/*"
 }
 
 unix{

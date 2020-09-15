@@ -1676,11 +1676,11 @@ int allocateChannel(channel_t *chan, ephem_t *eph, ionoutc_t ionoutc, gpstime_t 
 
 void GpsSimThread::run()
 {
+    int running_time;
     int sv;
     int neph,ieph;
 	gpstime_t g0;
-	
-    double llh[3];
+
     channel_t chan[MAX_CHAN];
     ephem_t eph[EPHEM_ARRAY_SIZE][MAX_SAT];
 	
@@ -1736,24 +1736,12 @@ void GpsSimThread::run()
 	verb = FALSE;
 	ionoutc.enable = TRUE;
 
-    if(useCurrentTime)
-    {
-        timeoverwrite = TRUE;
-        time_t timer;
-        struct tm *gmt;
+    ////////////////////////////////////////////////////////////
+    // Receiver antenna gain pattern
+    ////////////////////////////////////////////////////////////
 
-        time(&timer);
-        gmt = gmtime(&timer);
-
-        t0.y = gmt->tm_year+1900;
-        t0.m = gmt->tm_mon+1;
-        t0.d = gmt->tm_mday;
-        t0.hh = gmt->tm_hour;
-        t0.mm = gmt->tm_min;
-        t0.sec = (double)gmt->tm_sec;
-
-        date2gps(&t0, &g0);
-    }
+    for (i=0; i<37; i++)
+        ant_pat[i] = pow(10.0, -ant_pat_db[i]/20.0);
 
     /*while ((result=getopt(argc,argv,"r:e:u:g:c:l:o:s:b:T:t:d:iv"))!=-1)
 	{
@@ -1919,52 +1907,76 @@ void GpsSimThread::run()
 	// Read ephemeris
 	////////////////////////////////////////////////////////////
 
-	neph = readRinexNavAll(eph, &ionoutc, navfile);
+    while(1)
+    {
+        if(stop)
+            break;
 
-	if (neph==0)
-	{
-		fprintf(stderr, "ERROR: No ephemeris available.\n");
-		exit(1);
-	}
+        neph = readRinexNavAll(eph, &ionoutc, navfile);
 
-	if ((verb==TRUE)&&(ionoutc.vflg==TRUE))
-	{
-		fprintf(stderr, "  %12.3e %12.3e %12.3e %12.3e\n", 
-			ionoutc.alpha0, ionoutc.alpha1, ionoutc.alpha2, ionoutc.alpha3);
-		fprintf(stderr, "  %12.3e %12.3e %12.3e %12.3e\n", 
-			ionoutc.beta0, ionoutc.beta1, ionoutc.beta2, ionoutc.beta3);
-		fprintf(stderr, "   %19.11e %19.11e  %9d %9d\n",
-			ionoutc.A0, ionoutc.A1, ionoutc.tot, ionoutc.wnt);
-		fprintf(stderr, "%6d\n", ionoutc.dtls);
-	}
+        if (neph==0)
+        {
+            fprintf(stderr, "ERROR: No ephemeris available.\n");
+            exit(1);
+        }
 
-	for (sv=0; sv<MAX_SAT; sv++) 
-	{
-		if (eph[0][sv].vflg==1)
-		{
-			gmin = eph[0][sv].toc;
-			tmin = eph[0][sv].t;
-			break;
-		}
-	}
+        if ((verb==TRUE)&&(ionoutc.vflg==TRUE))
+        {
+            fprintf(stderr, "  %12.3e %12.3e %12.3e %12.3e\n",
+                ionoutc.alpha0, ionoutc.alpha1, ionoutc.alpha2, ionoutc.alpha3);
+            fprintf(stderr, "  %12.3e %12.3e %12.3e %12.3e\n",
+                ionoutc.beta0, ionoutc.beta1, ionoutc.beta2, ionoutc.beta3);
+            fprintf(stderr, "   %19.11e %19.11e  %9d %9d\n",
+                ionoutc.A0, ionoutc.A1, ionoutc.tot, ionoutc.wnt);
+            fprintf(stderr, "%6d\n", ionoutc.dtls);
+        }
 
-	gmax.sec = 0;
-	gmax.week = 0;
-	tmax.sec = 0;
-	tmax.mm = 0;
-	tmax.hh = 0;
-	tmax.d = 0;
-	tmax.m = 0;
-	tmax.y = 0;
-	for (sv=0; sv<MAX_SAT; sv++)
-	{
-		if (eph[neph-1][sv].vflg == 1)
-		{
-			gmax = eph[neph-1][sv].toc;
-			tmax = eph[neph-1][sv].t;
-			break;
-		}
-	}
+        if(useCurrentTime)
+        {
+            timeoverwrite = TRUE;
+            time_t timer;
+            struct tm *gmt;
+
+            time(&timer);
+            gmt = gmtime(&timer);
+
+            t0.y = gmt->tm_year+1900;
+            t0.m = gmt->tm_mon+1;
+            t0.d = gmt->tm_mday;
+            t0.hh = gmt->tm_hour;
+            t0.mm = gmt->tm_min;
+            t0.sec = (double)(gmt->tm_sec);
+
+            date2gps(&t0, &g0);
+        }
+
+        for (sv=0; sv<MAX_SAT; sv++)
+        {
+            if (eph[0][sv].vflg==1)
+            {
+                gmin = eph[0][sv].toc;
+                tmin = eph[0][sv].t;
+                break;
+            }
+        }
+
+        gmax.sec = 0;
+        gmax.week = 0;
+        tmax.sec = 0;
+        tmax.mm = 0;
+        tmax.hh = 0;
+        tmax.d = 0;
+        tmax.m = 0;
+        tmax.y = 0;
+        for (sv=0; sv<MAX_SAT; sv++)
+        {
+            if (eph[neph-1][sv].vflg == 1)
+            {
+                gmax = eph[neph-1][sv].toc;
+                tmax = eph[neph-1][sv].t;
+                break;
+            }
+        }
 
 	if (g0.week>=0) // Scenario start time has been set.
     {
@@ -1975,7 +1987,7 @@ void GpsSimThread::run()
 			double dsec;
 
 			gtmp.week = g0.week;
-			gtmp.sec = (double)(((int)(g0.sec))/7200)*7200.0;
+            gtmp.sec = (double)(((int)(g0.sec))/7200)*7200.0;
 
 			dsec = subGpsTime(gtmp,gmin);
 
@@ -2106,20 +2118,14 @@ void GpsSimThread::run()
 	}
 
 	////////////////////////////////////////////////////////////
-	// Receiver antenna gain pattern
-	////////////////////////////////////////////////////////////
-
-	for (i=0; i<37; i++)
-		ant_pat[i] = pow(10.0, -ant_pat_db[i]/20.0);
-
-	////////////////////////////////////////////////////////////
 	// Generate baseband signals
 	////////////////////////////////////////////////////////////
 
 	// Update receiver time
 	grx = incGpsTime(grx, 0.1);
 
-    iumd=0;
+    running_time=0;
+    iumd=1;
     while (1)
     {
         while(sample_buffers[write_buff_pos].full)
@@ -2143,11 +2149,8 @@ void GpsSimThread::run()
 				range_t rho;
 				sv = chan[i].prn-1;
 
-				// Current pseudorange
-				if (!staticLocationMode)
-					computeRange(&rho, eph[ieph][sv], &ionoutc, grx, xyz[iumd]);
-				else
-					computeRange(&rho, eph[ieph][sv], &ionoutc, grx, xyz[0]);
+                // Current pseudorange
+                computeRange(&rho, eph[ieph][sv], &ionoutc, grx, xyz[iumd]);
 
 				chan[i].azel[0] = rho.azel[0];
 				chan[i].azel[1] = rho.azel[1];
@@ -2237,15 +2240,15 @@ void GpsSimThread::run()
             }
 
 			// Scaled by 2^7
-            i_acc = (i_acc+128)>>7;
-            q_acc = (q_acc+128)>>7;
+            i_acc = (i_acc+64)>>7;
+            q_acc = (q_acc+64)>>7;
 
 			// Store I/Q samples into buffer
             iq_buff[isamp*2] = (short)i_acc;
             iq_buff[isamp*2+1] = (short)q_acc;
         }
 
-		if (data_format==SC01)
+        /*if (data_format==SC01)
 		{
 			for (isamp=0; isamp<2*iq_buff_size; isamp++)
 			{
@@ -2259,7 +2262,7 @@ void GpsSimThread::run()
 		{
 			for (isamp=0; isamp<2*iq_buff_size; isamp++)
 				iq8_buff[isamp] = iq_buff[isamp]>>4; // 12-bit bladeRF -> 8-bit HackRF
-        }
+        }*/
 
 		//
 		// Update navigation message and channel allocation every 30 seconds
@@ -2299,10 +2302,7 @@ void GpsSimThread::run()
 			}
 
             // Update channel allocation
-            if (!staticLocationMode)
-                allocateChannel(chan, eph[ieph], ionoutc, grx, xyz[iumd], elvmask);
-            else
-                allocateChannel(chan, eph[ieph], ionoutc, grx, xyz[0], elvmask);
+            allocateChannel(chan, eph[ieph], ionoutc, grx, xyz[iumd], elvmask);
 
 			// Show ditails about simulated channels
 			if (verb==TRUE)
@@ -2328,11 +2328,17 @@ void GpsSimThread::run()
         if(!holdLocation)
         {
             iumd++;
+            running_time++;
             if(iumd >= numd)
             {
+                if(running_time > 36000*5)
+                {
+                    break;
+                }
                 iumd = 0;
             }
         }
+    }
     }
 
     fprintf(stderr, "\nDone!\n");

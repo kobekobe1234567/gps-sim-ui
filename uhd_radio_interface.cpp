@@ -107,14 +107,16 @@ bool radio_init(double rate, double freq, double gain)
         UHD_ASSERT_THROW(lo_locked.to_bool());
     }
     sensor_names = usrp->get_mboard_sensor_names(0);
-    if ((ref == "external")
-        and (std::find(sensor_names.begin(), sensor_names.end(), "ref_locked")
-                != sensor_names.end())) {
-        uhd::sensor_value_t ref_locked = usrp->get_mboard_sensor("ref_locked", 0);
-        std::cout << boost::format("Checking TX: %s ...") % ref_locked.to_pp_string()
-                  << std::endl;
-        if(!ref_locked.to_bool())
-            return false;
+    for(int i=0; i<5; i++) //check 5 times to ensure external clock available
+    {
+        if ((ref == "external")
+            and (std::find(sensor_names.begin(), sensor_names.end(), "ref_locked") != sensor_names.end())) {
+            uhd::sensor_value_t ref_locked = usrp->get_mboard_sensor("ref_locked", 0);
+            std::cout << boost::format("Checking TX: %s ...") % ref_locked.to_pp_string()
+                      << std::endl;
+            if(!ref_locked.to_bool())
+                return false;
+        }
     }
 
     // create a transmit streamer
