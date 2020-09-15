@@ -1,0 +1,2 @@
+Connect B210/B200, there is unkown device in device manager, update its driver, choose search in erllc_uhd_winusb_driver folder
+插上B210或B200后，设备管理器里面有未知设备，选择更新驱动程序，选择搜索erllc_uhd_winusb_driver目录
