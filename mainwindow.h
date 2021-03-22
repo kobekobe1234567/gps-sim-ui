@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QTranslator>
+#include <QVariant>
+#include <QSettings>
 #include "radio_thread.h"
 #include "gpssim_thread.h"
 
@@ -29,9 +31,15 @@ private:
 
     QTranslator *translator;
 
+    QSettings *m_psetting;
+
     bool containChinese(QString str);
 
 private slots:
+
+    void loadSetting();
+
+    void saveSetting();
 
     void onChangeLanguege(bool state);
 

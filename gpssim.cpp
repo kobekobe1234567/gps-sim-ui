@@ -1914,7 +1914,7 @@ void GpsSimThread::run()
 
         neph = readRinexNavAll(eph, &ionoutc, navfile);
 
-        if (neph==0)
+        if (neph<=0)
         {
             fprintf(stderr, "ERROR: No ephemeris available.\n");
             exit(1);

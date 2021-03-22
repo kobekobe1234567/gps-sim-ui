@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDir>
+#include <QTextCodec>
 #include <QMessageBox>
 #include <QFileDialog>
 
@@ -17,26 +18,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     radio_have_init = 0;
 
+    m_psetting = new QSettings("setting.ini", QSettings::IniFormat);
+
     radio_thread = new RadioThread();
     gpssim_thread = new GpsSimThread();
 
     translator = new QTranslator(this);
 
-    QDir dir = QDir::current();
-    QStringList filters;
-    filters << "*.txt" << "*.csv";
-    QStringList files = dir.entryList(filters);
-    if(files.count() > 0)
-        ui->lineEdit_motionfile->setText(files[0]);
-    ui->lineEdit_motionfile->setReadOnly(true);
-    filters.clear();
-    filters << "brdc*";
-    files = dir.entryList(filters);
-    if(files.count() > 0)
-        ui->lineEdit_gpsfile->setText(files[0]);
     ui->lineEdit_gpsfile->setReadOnly(true);
+    ui->lineEdit_motionfile->setReadOnly(true);
     ui->lineEdit_gain->setValidator(new QIntValidator(0, 90, this));
-    ui->lineEdit_gain->setText("45");
     ui->checkBox_currentTime->setCheckState(Qt::Checked);
 
     ui->pushButton_start->setEnabled(true);
@@ -53,11 +44,64 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lineEdit_gain, SIGNAL(textChanged(const QString&)), this, SLOT(onGainChanged(const QString&)));
     connect(gpssim_thread, SIGNAL(error(int)), this, SLOT(onGpsThreadError(int)));
     connect(radio_thread, SIGNAL(error(int)), this, SLOT(onRadioThreadError(int)));
+
+    loadSetting();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::loadSetting()
+{
+    QDir dir = QDir::current();
+    QStringList filters;
+    QStringList files;
+
+    if(m_psetting->contains("/setting/gps_file"))
+    {
+        QVariant gpsfile = m_psetting->value("/setting/gps_file");
+        ui->lineEdit_gpsfile->setText(gpsfile.toString());
+    }
+    else
+    {
+        filters << "brdc*";
+        files = dir.entryList(filters);
+        if(files.count() > 0)
+            ui->lineEdit_gpsfile->setText(files[0]);
+    }
+
+    if(m_psetting->contains("/setting/motion_file"))
+    {
+        QVariant motionfile = m_psetting->value("/setting/motion_file");
+        ui->lineEdit_motionfile->setText(motionfile.toString());
+    }
+    else
+    {
+        filters.clear();
+        filters << "*.txt" << "*.csv";
+        files = dir.entryList(filters);
+        if(files.count() > 0)
+            ui->lineEdit_motionfile->setText(files[0]);
+    }
+
+    if(m_psetting->contains("/setting/radio_gain"))
+    {
+        QVariant radio_gain = m_psetting->value("/setting/radio_gain");
+        ui->lineEdit_gain->setText(radio_gain.toString());
+    }
+    else
+    {
+        ui->lineEdit_gain->setText("45");
+    }
+}
+
+void MainWindow::saveSetting()
+{
+    m_psetting->setValue("/setting/gps_file", ui->lineEdit_gpsfile->text());
+    m_psetting->setValue("/setting/motion_file", ui->lineEdit_motionfile->text());
+    m_psetting->setValue("/setting/radio_gain", ui->lineEdit_gain->text());
 }
 
 void MainWindow::onBrowseGpsButtonClick()
@@ -84,23 +128,6 @@ void MainWindow::onBrowseMotionButtonClick()
     }
 }
 
-bool MainWindow::containChinese(QString str)
-{
-    int nCount = str.count();
-    bool containsChinese  = false;
-    for(int i = 0 ; i < nCount ; i++)
-    {
-        QChar cha = str.at(i);
-        ushort uni = cha.unicode();
-        if(uni >= 0x4E00 && uni <= 0x9FA5)
-        {
-            containsChinese = true;
-            break;
-        }
-    }
-    return containsChinese;
-}
-
 void MainWindow::onStartButtonClick()
 {
     if(ui->lineEdit_gpsfile->text().length() == 0)
@@ -108,19 +135,19 @@ void MainWindow::onStartButtonClick()
         QMessageBox::warning(NULL, tr("星历文件错误"), tr("请设置星历文件。"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
+    if(!QFile(ui->lineEdit_gpsfile->text()).exists())
+    {
+        QMessageBox::warning(NULL, tr("星历文件路径错误"), tr("没有这个文件，请确认路径是否正确。"), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
     if(ui->lineEdit_motionfile->text().length() == 0)
     {
         QMessageBox::warning(NULL, tr("轨迹文件错误"), tr("请设置轨迹文件。"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
-    if(containChinese(ui->lineEdit_gpsfile->text()))
+    if(!QFile(ui->lineEdit_motionfile->text()).exists())
     {
-        QMessageBox::warning(NULL, tr("不支持中文文件名和文件夹"), tr("请修改文件名和文件夹名为英文。"), QMessageBox::Ok, QMessageBox::Ok);
-        return;
-    }
-    if(containChinese(ui->lineEdit_motionfile->text()))
-    {
-        QMessageBox::warning(NULL, tr("不支持中文文件名和文件夹"), tr("请修改文件名和文件夹名为英文。"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(NULL, tr("轨迹文件路径错误"), tr("没有这个文件，请确认路径是否正确。"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
     if(ui->lineEdit_gain->text().length() == 0)
@@ -139,8 +166,9 @@ void MainWindow::onStartButtonClick()
         radio_have_init = 1;
     }
     gps_buffer_init();
-    strcpy(gpssim_thread->navfile, ui->lineEdit_gpsfile->text().toLatin1().data());
-    strcpy(gpssim_thread->umfile, ui->lineEdit_motionfile->text().toLatin1().data());
+    strcpy(gpssim_thread->navfile, ui->lineEdit_gpsfile->text().toLocal8Bit().data());
+    strcpy(gpssim_thread->umfile, ui->lineEdit_motionfile->text().toLocal8Bit().data());
+
     if(ui->lineEdit_motionfile->text().endsWith(".csv"))
         gpssim_thread->nmeaGGA = 0;
     else
@@ -164,6 +192,7 @@ void MainWindow::onStartButtonClick()
     ui->checkBox_currentTime->setEnabled(false);
     ui->pushButton_start->setEnabled(false);
     ui->pushButton_stop->setEnabled(true);
+    saveSetting();
 }
 
 void MainWindow::onStopButtonClick()
