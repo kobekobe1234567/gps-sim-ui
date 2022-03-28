@@ -230,6 +230,7 @@ void MainWindow::onStartButtonClick()
     gpssim_thread->start();
     radio_thread->start();
 
+    ui->checkBox_externalclock->setEnabled(false);
     ui->checkBox_currentTime->setEnabled(false);
     ui->pushButton_start->setEnabled(false);
     ui->pushButton_stop->setEnabled(true);
@@ -243,6 +244,7 @@ void MainWindow::onStopButtonClick()
     gpssim_thread->wait();
     radio_thread->wait();
     radio_close();
+    ui->checkBox_externalclock->setEnabled(true);
     ui->checkBox_currentTime->setEnabled(true);
     ui->pushButton_start->setEnabled(true);
     ui->pushButton_stop->setEnabled(false);
