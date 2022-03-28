@@ -5,7 +5,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-bool radio_init(double rate, double freq, double gain);
+bool radio_init(double rate, double freq, double gain, bool exeternal_clock);
 void radio_setgain(double gain);
 void radio_close();
 void gps_buffer_init();
@@ -95,13 +95,54 @@ void MainWindow::loadSetting()
     {
         ui->lineEdit_gain->setText("45");
     }
+
+    if(m_psetting->contains("/setting/external_clock"))
+    {
+        bool ok;
+        QVariant external_clock = m_psetting->value("/setting/external_clock");
+        int val = external_clock.toInt(&ok);
+        if(ok && val == 1)
+            ui->checkBox_externalclock->setCheckState(Qt::Checked);
+        else
+            ui->checkBox_externalclock->setCheckState(Qt::Unchecked);
+    }
+    else
+    {
+        ui->checkBox_externalclock->setCheckState(Qt::Unchecked);
+    }
+
+    if(m_psetting->contains("/setting/use_timenow"))
+    {
+        bool ok;
+        QVariant external_clock = m_psetting->value("/setting/use_timenow");
+        int val = external_clock.toInt(&ok);
+        if(ok && val == 1)
+            ui->checkBox_currentTime->setCheckState(Qt::Checked);
+        else
+            ui->checkBox_currentTime->setCheckState(Qt::Unchecked);
+    }
+    else
+    {
+        ui->checkBox_currentTime->setCheckState(Qt::Checked);
+    }
 }
 
 void MainWindow::saveSetting()
 {
+    int val;
     m_psetting->setValue("/setting/gps_file", ui->lineEdit_gpsfile->text());
     m_psetting->setValue("/setting/motion_file", ui->lineEdit_motionfile->text());
     m_psetting->setValue("/setting/radio_gain", ui->lineEdit_gain->text());
+    if(ui->checkBox_externalclock->isChecked())
+        val = 1;
+    else
+        val = 0;
+    m_psetting->setValue("/setting/external_clock", val);
+    if(ui->checkBox_currentTime->isChecked())
+        val = 1;
+    else
+        val = 0;
+    m_psetting->setValue("/setting/use_timenow", val);
 }
 
 void MainWindow::onBrowseGpsButtonClick()
@@ -158,7 +199,7 @@ void MainWindow::onStartButtonClick()
     float radio_gain = ui->lineEdit_gain->text().toFloat();
     //if(!radio_have_init)
     {
-        if(!radio_init(2.6e6, 1575420000, radio_gain))
+        if(!radio_init(2.6e6, 1575420000, radio_gain, ui->checkBox_externalclock->isChecked()))
         {
             QMessageBox::warning(NULL, tr("没检测到外部时钟"), tr("请将外部时钟接到B210的10Mhz。"), QMessageBox::Ok, QMessageBox::Ok);
             return;

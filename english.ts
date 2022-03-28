@@ -6,93 +6,99 @@
     <message>
         <location filename="mainwindow.ui" line="23"/>
         <source>中文</source>
-        <translation type="unfinished">中文</translation>
+        <translation>中文</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="30"/>
         <source>english</source>
-        <translation type="unfinished">English</translation>
+        <translation>English</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="60"/>
         <source>星历文件：</source>
-        <translation type="unfinished">Nav File:</translation>
+        <translation>Nav File:</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="83"/>
         <location filename="mainwindow.ui" line="117"/>
         <source>浏览</source>
-        <translation type="unfinished">Browse</translation>
+        <translation>Browse</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="100"/>
         <source>轨迹文件：</source>
-        <translation type="unfinished">Motion File:</translation>
+        <translation>Motion File:</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="134"/>
         <source>射频增益：</source>
-        <translation type="unfinished">Radio Gain:</translation>
+        <translation>Radio Gain:</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="157"/>
         <source>(0-90)</source>
-        <translation type="unfinished">(0-90)</translation>
+        <translation>(0-90)</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="182"/>
-        <source>使用当前时间</source>
-        <translation type="unfinished">use current time</translation>
+        <source>使用外部时钟</source>
+        <translation>use external clock</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="189"/>
+        <source>使用当前时间</source>
+        <translation>use current time</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="196"/>
         <source>固定位置</source>
-        <translation type="unfinished">hold location</translation>
+        <translation>hold location</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="224"/>
+        <location filename="mainwindow.ui" line="231"/>
         <source>启动</source>
-        <translation type="unfinished">start</translation>
+        <translation>start</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="244"/>
+        <location filename="mainwindow.ui" line="251"/>
         <source>停止</source>
-        <translation type="unfinished">stop</translation>
+        <translation>stop</translation>
     </message>
     <message>
+        <location filename="mainwindow.ui" line="286"/>
         <source>https://github.com/kobekobe1234567/gps-sim-ui</source>
-        <translation type="obsolete">https://github.com/kobekobe1234567/gps-sim-ui</translation>
+        <translation>https://github.com/kobekobe1234567/gps-sim-ui</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="135"/>
-        <source>星历文件错误</source>
-        <translation type="unfinished">Nav file error</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="135"/>
-        <source>请设置星历文件。</source>
-        <translation type="unfinished">please set correct Nav file</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="140"/>
-        <source>星历文件路径错误</source>
-        <translation type="unfinished">nav file path error</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="140"/>
         <location filename="mainwindow.cpp" line="150"/>
+        <source>星历文件错误</source>
+        <translation>Nav file error</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="150"/>
+        <source>请设置星历文件。</source>
+        <translation>please set correct Nav file</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="155"/>
+        <source>星历文件路径错误</source>
+        <translation>nav file path error</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="155"/>
+        <location filename="mainwindow.cpp" line="165"/>
         <source>没有这个文件，请确认路径是否正确。</source>
-        <translation type="unfinished">can not find this file. please check the path is correct</translation>
+        <translation>can not find this file. please check the path is correct</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="145"/>
+        <location filename="mainwindow.cpp" line="160"/>
         <source>轨迹文件错误</source>
-        <translation type="unfinished">Motion file error</translation>
+        <translation>Motion file error</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="145"/>
+        <location filename="mainwindow.cpp" line="160"/>
         <source>请设置轨迹文件。</source>
-        <translation type="unfinished">please set motion file</translation>
+        <translation>please set motion file</translation>
     </message>
     <message>
         <source>不支持中文文件名和文件夹</source>
@@ -103,45 +109,45 @@
         <translation type="obsolete">please use English path</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="150"/>
+        <location filename="mainwindow.cpp" line="165"/>
         <source>轨迹文件路径错误</source>
-        <translation type="unfinished">motion file path error</translation>
+        <translation>motion file path error</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="155"/>
+        <location filename="mainwindow.cpp" line="170"/>
         <source>增益错误</source>
-        <translation type="unfinished">Radio gain error</translation>
+        <translation>Radio gain error</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="155"/>
+        <location filename="mainwindow.cpp" line="170"/>
         <source>请设置增益。</source>
-        <translation type="unfinished">please set radio gain</translation>
+        <translation>please set radio gain</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="163"/>
+        <location filename="mainwindow.cpp" line="178"/>
         <source>没检测到外部时钟</source>
-        <translation type="unfinished">not detect external clock</translation>
+        <translation>not detect external clock</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="163"/>
+        <location filename="mainwindow.cpp" line="178"/>
         <source>请将外部时钟接到B210的10Mhz。</source>
-        <translation type="unfinished">please connect external clock to B210 10Mhz port</translation>
+        <translation>please connect external clock to B210 10Mhz port</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="231"/>
-        <location filename="mainwindow.cpp" line="236"/>
+        <location filename="mainwindow.cpp" line="246"/>
+        <location filename="mainwindow.cpp" line="251"/>
         <source>错误</source>
-        <translation type="unfinished">Error</translation>
+        <translation>Error</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="231"/>
+        <location filename="mainwindow.cpp" line="246"/>
         <source>无法打开轨迹文件</source>
-        <translation type="unfinished">can not open motion file</translation>
+        <translation>can not open motion file</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="236"/>
+        <location filename="mainwindow.cpp" line="251"/>
         <source>轨迹文件格式错误</source>
-        <translation type="unfinished">motion file format error</translation>
+        <translation>motion file format error</translation>
     </message>
 </context>
 </TS>
